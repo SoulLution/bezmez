@@ -1,7 +1,7 @@
 <template>
   <label class="select cursor-pointer">
     <div class="imitate relative" :class="{'open': focus}">
-      <span class="w-full flex ai-center jc-fs white_space-nowrap pl-2 pr-6 pt-2 pb-1 color-grey" @click="focusTrue()">{{value_name ? data[value_name] : data}}</span>
+      <span class="w-full flex ai-center jc-fs mob:jc-center white_space-nowrap pl-2 pr-6 pt-2 mob:py-0 pb-1 color-grey" @click="focusTrue()">{{value_name ? data[value_name] : data}}</span>
       <div class="options absolute flex col z-1 bg-white" v-if="focus" v-click-outside:focus>
         <div 
           class="option w-full white_space-nowrap flex ai-center jc-fs color-grey pl-2 pr-6 pt-2 pb-1" 
@@ -139,6 +139,11 @@ export default {
         overflow: auto;
         border: 1px solid $d_black;
       }
+    }
+  }
+  @media (max-width: 1278px){
+    .imitate>span:after{
+      border-color: #00000050;
     }
   }
 </style>

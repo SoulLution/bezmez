@@ -2,7 +2,7 @@
   <div class="w-full flex col jc-sb" style="overflow-y: scroll; overflow-x: hidden; height: 100vh">
     <v-header />
     <v-registrate />
-    <router-view />
+    <router-view id="main" />
     <v-footer />
   </div>
 </template>

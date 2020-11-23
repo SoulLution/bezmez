@@ -37,7 +37,7 @@
           </div>
         </div>
         <v-product-list class="mt-6" :list="list" />
-        <svg class="cursor-pointer " width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" @click="changeSlide(1)">
+        <svg class="cursor-pointer none mob:block " width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" @click="changeSlide(1)">
             <circle cx="30" cy="30" r="29.5" stroke="black"/>
             <path d="M35.7071 29.2929C36.0976 29.6834 36.0976 30.3166 35.7071 30.7071L29.3431 37.0711C28.9526 37.4616 28.3195 37.4616 27.9289 37.0711C27.5384 36.6805 27.5384 36.0474 27.9289 35.6569L33.5858 30L27.9289 24.3431C27.5384 23.9526 27.5384 23.3195 27.9289 22.9289C28.3195 22.5384 28.9526 22.5384 29.3431 22.9289L35.7071 29.2929ZM34 29L35 29L35 31L34 31L34 29Z" fill="black"/>
         </svg>

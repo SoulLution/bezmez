@@ -21,7 +21,14 @@
           <input class="w-full pl-10 pr-2 py-4" type="search" name="bezmez-search" v-model="search">
         </div>
 
-        <div class="flex col w-full ai-fs mob:jc-fs mob:fixed">
+        <div class="flex col w-full ai-fs mob:jc-fs mob:fixed mob:overflow-auto" :class="{'active': open_selects}">
+          <div class="filter-head none mob:flex row jc-sb w-full b-0 bb-1 b-solid border-l_grey">
+            <h1 class="text-48">Фильтры</h1>
+            <svg @click="open_selects = !open_selects" width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="21.2133" y="22.2129" width="30" height="1" transform="rotate(-135 21.2133 22.2129)" fill="black"/>
+              <rect x="0.213135" y="21.2139" width="30" height="1" transform="rotate(-45 0.213135 21.2139)" fill="black"/>
+            </svg>
+          </div>
           <div class="flex row jc-sb w-full mt-2">
             <div class="flex row mob:w-full jc-sb">
               <h2 class="text-40 mob:text-24 mr-8 mob:mr-2">Атлас оптом</h2>
@@ -50,15 +57,44 @@
             </div>
           </div>
 
-          <div class="filters flex row w-full flex-wrap jc-fs">
+          <div class="filters flex mob:none row w-full flex-wrap jc-fs">
             <template v-for="(select, i) in selects">
-              <v-select :value="select.title"  :key="i"/>
+              <v-select :value="select.title" :key="i"/>
             </template>
           </div>
-          
+
+
+
+
+
+          <div class="filters mob:flex none row w-full flex-wrap jc-fs">
+            <template v-for="(select, i) in selects.sort((a,b) =>a.id === 'price' ? -1 : 1)">
+              <div class="flex jc-fs py-7 w-full b-0 bb-1 b-solid border-l_grey" :key="i">
+                <v-select class="w-auto text-24" :value="select.title"/>
+              </div>
+            </template>
+          </div>
+
+          <button @click="open_selects = !open_selects" class="none mob:flex text-18 mt-40 bg-l_black border-l_black color-white cursor-pointer py-7 px-10 radius-5 hover:color-l_black hover:bg-white">Показать 134 товаров</button>
+
+
+
+
+        </div>
+
+        <div class="none mob:flex w-full jc-sb">
+          <button @click="open_selects = !open_selects" class="text-20 mob:text-18 mt-10 bg-white border-l_black color-l_black cursor-pointer py-3 mob:py-3 mob:mr-2 w-full radius-5 hover:color-l_black hover:bg-white">Фильтры</button>
+
+          <v-select class="arrow-none text-20 mob:text-18 mt-10 bg-white b-1 b-solid border-l_black color-l_black cursor-pointer py-3 mob:py-3 mob:ml-2 w-full radius-5 hover:color-l_black hover:bg-white" :options="['По умолчанию','По возрастанию','По убыванию','Сначала новые']" v-model="select" />
         </div>
 
         <v-product-list class="mt-6" :list="last" />
+        
+        <svg class="cursor-pointer none mob:block " width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" @click="changeSlide(1)">
+          <circle cx="30" cy="30" r="29.5" stroke="black"/>
+          <path d="M35.7071 29.2929C36.0976 29.6834 36.0976 30.3166 35.7071 30.7071L29.3431 37.0711C28.9526 37.4616 28.3195 37.4616 27.9289 37.0711C27.5384 36.6805 27.5384 36.0474 27.9289 35.6569L33.5858 30L27.9289 24.3431C27.5384 23.9526 27.5384 23.3195 27.9289 22.9289C28.3195 22.5384 28.9526 22.5384 29.3431 22.9289L35.7071 29.2929ZM34 29L35 29L35 31L34 31L34 29Z" fill="black"/>
+        </svg>
+        <span class="text-center none mob:block w-1/2 mb-11">Перейти на другую страницу</span>
 
         
 
@@ -81,6 +117,7 @@ export default {
       search: '',
       more: 0,
       current_rubric: 0,
+      open_selects: false,
       selects: [
         {
           title: 'Вид',
@@ -108,7 +145,7 @@ export default {
         },
         {
           title: 'Цена(погонный метр)',
-          id: 'vid',
+          id: 'price',
           value: null,
           childs: []
         },
@@ -370,7 +407,19 @@ export default {
       ]
     }
   },
+  watch: {
+    open_selects(newBool){
+      let main = document.getElementById('main'),
+        z = ''
+      if(newBool){
+        z = 11
+        main.style.zIndex = z
+      }
+      setTimeout(()=>main.style.zIndex = z,300)
+    }
+  },
   created() {
+    this.open_selects = true
     this.categoryes = this.categoryes.map(x => { return {...x, open: false} })
     this.categoryes[0].open = true
     for(let i = 0; i < 30; i++)
@@ -529,6 +578,19 @@ export default {
   }
 
   @media (max-width: 1278px){
+    .filters{
+      margin-left: -1rem;
+      width: 100vw;
+      &>*{
+        margin-right: 0;
+      }
+    }
+    .filter-head{
+      width: 100vw;
+      margin-left: -1rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
     .mob\:fixed{
       top: 0;
       left: 0;
@@ -537,6 +599,11 @@ export default {
       padding: 0 1rem;
       z-index: 10;
       background-color: white;
+      transform: translateX(-100%);
+      transition: 0.3s;
+      &.active{
+        transform: translateX(0);
+      }
     }
     .opacity-0{
       opacity: 1;
@@ -547,6 +614,17 @@ export default {
       & .overflow-hidden{
         overflow: visible;
       }
+    }
+    .text-center{
+      font-size: 18px;
+      line-height: 23px;
+      text-align: center;
+      color: #000000;
+      opacity: 0.3;
+    }
+    button{
+      width: 100vw;
+      margin-left: -1rem;
     }
   }
 </style>
