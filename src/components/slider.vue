@@ -46,7 +46,6 @@
             <img :src="slide.img_right" />
           </div>
         </template>
-        {{ current_left }}
         <div class="flex row slide jc-fs mob:ai-center mob:w-full">
           <div
             class="absolute"
@@ -58,6 +57,7 @@
             "
           >
             <svg
+              class="none mob:block"
               width="59"
               height="118"
               viewBox="0 0 59 118"
@@ -81,6 +81,7 @@
             "
           >
             <svg
+              class="none mob:block"
               width="59"
               height="118"
               viewBox="0 0 59 118"

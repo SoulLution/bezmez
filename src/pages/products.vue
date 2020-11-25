@@ -120,12 +120,39 @@
             </div>
           </div>
 
-          <div class="filters flex mob:none row w-full flex-wrap jc-fs">
+          <div
+            class="filters flex mob:none row w-full flex-wrap jc-fs ai-fs"
+            :class="{ active: show_filters }"
+          >
             <template v-for="(select, i) in selects">
-              <v-select :value="select.title" :key="i" />
+              <div class="flex col ai-fs color-grey" :key="i">
+                <span>{{ select.title }}</span>
+                <component
+                  :is="
+                    select.type === 'select'
+                      ? 'vSelect'
+                      : select.type === 'inputs'
+                      ? 'vInputs'
+                      : ''
+                  "
+                  :class="
+                    select.type === 'select'
+                      ? 'b-2 b-solid border-black mt-2'
+                      : 'mt-2'
+                  "
+                  :value="select.value"
+                  @input="select.value = e"
+                  :title="select.title"
+                />
+              </div>
             </template>
           </div>
-
+          <span
+            class="show_filters flex pr-6 color-grey text-18 mt-4 mob:none cursor-pointer"
+            :class="{ active: show_filters }"
+            @click="show_filters = !show_filters"
+            >{{ show_filters ? "Скрыть" : "Расширенный поиск" }}</span
+          >
           <div class="filters mob:flex none row w-full flex-wrap jc-fs">
             <template
               v-for="(select, i) in selects.sort((a, b) =>
@@ -133,10 +160,33 @@
               )"
             >
               <div
-                class="flex jc-fs py-7 w-full b-0 bb-1 b-solid border-l_grey"
+                class="flex col ai-fs px-4 jc-fs py-7 w-full b-0 bb-1 b-solid border-l_grey"
                 :key="i"
               >
-                <v-select class="w-auto text-24" :value="select.title" />
+                <span
+                  class="select-title pr-6 flex row color-grey cursor-pointer text-24 mb-4"
+                  :class="{ open: select.open }"
+                  @click="select.open = !select.open"
+                  >{{ select.title }}</span
+                >
+                <component
+                  :is="
+                    select.type === 'select'
+                      ? 'vSelect'
+                      : select.type === 'inputs'
+                      ? 'vInputs'
+                      : ''
+                  "
+                  class="selecter w-auto text-24"
+                  :class="{
+                    'b-2 b-solid border-black mt-2': select.type === 'select',
+                    'mt-2': !select.type === 'select',
+                    open: select.open
+                  }"
+                  :title="select.title"
+                  :value="select.value"
+                  @input="select.value = e"
+                />
               </div>
             </template>
           </div>
@@ -207,85 +257,112 @@ export default {
       store: "4955 товаров на складе",
       search: "",
       more: 0,
+      show_filters: false,
       current_rubric: 0,
       open_selects: false,
       selects: [
         {
           title: "Вид",
+          open: false,
           id: "vid",
-          value: null,
+          type: "select",
+          value: "Вид",
           childs: []
         },
         {
           title: "Ширина см",
+          open: false,
           id: "vid",
-          value: null,
+          type: "select",
+          value: "Ширина см",
           childs: []
         },
         {
           title: "Рисунок",
+          open: false,
           id: "vid",
-          value: null,
+          type: "select",
+          value: "Рисунок",
           childs: []
         },
         {
           title: "Страна производителя",
+          open: false,
           id: "vid",
-          value: null,
+          type: "select",
+          value: "Страна производителя",
           childs: []
         },
         {
           title: "Цена(погонный метр)",
+          open: false,
           id: "price",
-          value: null,
+          type: "inputs",
+          value: [null, null],
           childs: []
         },
         {
           title: "Статус",
+          open: false,
           id: "vid",
-          value: null,
+          type: "select",
+          value: "Статус",
           childs: []
         },
         {
           title: "Характеристика",
+          open: false,
           id: "vid",
-          value: null,
+          type: "select",
+          value: "Характеристика",
           childs: []
         },
         {
           title: "Цвет",
+          open: false,
           id: "vid",
-          value: null,
+          type: "select",
+          value: "Цвет",
           childs: []
         },
         {
           title: "Состав",
+          open: false,
           id: "vid",
-          value: null,
+          type: "select",
+          value: "Состав",
           childs: []
         },
         {
           title: "Рапорт",
+          open: false,
           id: "vid",
-          value: null,
+          type: "select",
+          value: "Рапорт",
           childs: []
         },
         {
           title: "Направление рисунка",
+          open: false,
           id: "vid",
-          value: null,
+          type: "select",
+          value: "Направление рисунка",
           childs: []
         },
         {
           title: "Шаг",
+          open: false,
           id: "vid",
-          value: null,
+          type: "select",
+          value: "Шаг",
           childs: []
         },
         {
           title: "Вес гр/кв метр",
+          open: false,
           id: "vid",
-          value: null,
+          type: "inputs",
+          value: [null, null],
           childs: []
         }
       ],
@@ -510,7 +587,6 @@ export default {
     }
   },
   created() {
-    this.open_selects = true;
     this.categoryes = this.categoryes.map(x => {
       return { ...x, open: false };
     });
@@ -625,9 +701,37 @@ nav {
   }
 }
 .filters {
+  max-height: 70px;
+  overflow: hidden;
+  transition: 0.3s;
+  &.active {
+    max-height: 50vh;
+  }
   & > * {
     margin-top: 6px;
     margin-right: 32px;
+  }
+}
+.show_filters {
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    border-right: 1px solid #797979;
+    border-bottom: 1px solid #797979;
+    max-width: 12px;
+    max-height: 12px;
+    min-width: 12px;
+    min-height: 12px;
+    transform: rotate(45deg) translate(-1px, -2px);
+    right: 7px;
+    transition: 0.3s;
+  }
+
+  &.active {
+    &:after {
+      transform: rotate(45deg) translate(4px, 2px) scale(-1, -1);
+    }
   }
 }
 .get_back {
@@ -674,8 +778,43 @@ nav {
   .filters {
     margin-left: -1rem;
     width: 100vw;
+    max-height: unset;
+    height: auto;
+    overflow: visible;
     & > * {
       margin-right: 0;
+    }
+  }
+  .selecter {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: 0.3s;
+    &.open {
+      opacity: 1;
+      max-height: 200px;
+    }
+  }
+  .select-title {
+    &:after {
+      content: "";
+      display: block;
+      position: absolute;
+      border-right: 1px solid #797979;
+      border-bottom: 1px solid #797979;
+      max-width: 12px;
+      max-height: 12px;
+      min-width: 12px;
+      min-height: 12px;
+      transform: rotate(45deg) translate(-1px, -2px);
+      right: 7px;
+      transition: 0.3s;
+    }
+
+    &.open {
+      &:after {
+        transform: rotate(45deg) translate(4px, 2px) scale(-1, -1);
+      }
     }
   }
   .filter-head {
@@ -702,6 +841,7 @@ nav {
     opacity: 1;
   }
   .gallery {
+    min-height: 170px;
     width: calc(100vw - 1rem);
     overflow-x: auto;
     & .overflow-hidden {
